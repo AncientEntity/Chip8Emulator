@@ -1,3 +1,14 @@
+#Custom Git Ignores
+.idea
+
+
+
+
+
+
+#Python Ignores Below.
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
