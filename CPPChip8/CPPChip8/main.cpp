@@ -1,11 +1,31 @@
 // CPPChip8.cpp : This file contains the 'main' function. Program execution begins and ends there.
 //
 
-#include <iostream>
+#include "main.h"
 
-int main()
+int main(int argc, char* argv[])
 {
-    std::cout << "Hello World!\n";
+    Chip8 *chip = new Chip8();
+    chip->DebugOpCodeTest();
+
+    Display* display = new Display();
+    display->Init();
+    
+    bool running = true;
+    while (running) {
+        int eventResult = display->HandleEvents();
+        if (eventResult == 1) { running = 0; }
+        int tickResult = chip->Tick();
+        if (tickResult == -1) {
+            std::cout << "CHIP-8 ERROPRMemory Out Of Bounds Exception" << std::endl;
+            running = 0;
+        }
+        SDL_Delay(500);
+    }
+
+    display->Close();
+    delete chip;
+    return 0;
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
