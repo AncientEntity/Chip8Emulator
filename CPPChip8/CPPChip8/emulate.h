@@ -7,7 +7,9 @@ public:
 
 	void Init();
 	int Tick();
+
 	int* GetDisplayBuffer();
+	int GetCurrentInstruction(int offset);
 
 	void OverrideMemory(int index, int8_t val); //For easy memory injection for debugging opcodes.
 	void DebugOpCodeTest();						//Injects memory with a few opcodes to test.
@@ -16,6 +18,7 @@ private:
 	int8_t registers[16];
 	int addressRegister;
 	int stack[16];
+	int stackDepth = 0;
 
 	int iRegister = 0;
 	int programCounter = 0x200;

@@ -16,9 +16,16 @@ int main(int argc, char* argv[])
         int eventResult = display->HandleEvents();
         if (eventResult == 1) { running = 0; }
         int tickResult = chip->Tick();
-        if (tickResult == -1) {
-            std::cout << "CHIP-8 ERROPRMemory Out Of Bounds Exception" << std::endl;
+        switch(tickResult) {
+        case (-1):
+            std::cout << "CHIP-8 ERROR Memory Out Of Bounds Exception" << std::endl;
             running = 0;
+        
+        case(-2):
+            std::cout << "CHIP-8 ERROR Instruction Failed: " << chip->GetCurrentInstruction(-1) << std::endl;
+            break;
+        default:
+            break;
         }
         SDL_Delay(500);
     }
