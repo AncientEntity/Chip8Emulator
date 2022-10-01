@@ -7,29 +7,28 @@ bool Chip8::_ZZZZ(int opcode) {
 		//Top Level Cases
 	case 0x0000:
 		return Chip8::_0ZZZ(opcode);
-		break;
 	case 0x8000:
 		return Chip8::_8ZZZ(opcode);
-		break;
 	case 0xE000:
 		return Chip8::_EZZZ(opcode);
-		break;
 	case 0xF000:
 		return Chip8::_FZZZ(opcode);
-		break;
+
 	//Actual OpCodes:
 	case 0x1000: //1NNN JUMP
 		return Chip8::_1NNN(opcode);
-		break;
 	case 0x2000: //1NNN JUMP
 		return Chip8::_2NNN(opcode);
-		break;
 	case 0x3000: //1NNN JUMP
 		return Chip8::_3XNN(opcode);
-		break;
 	case 0x4000: //1NNN JUMP
 		return Chip8::_4XNN(opcode);
-		break;
+	case 0x5000:
+		return Chip8::_5XY0(opcode);
+	case 0x6000:
+		return Chip8::_6XNN(opcode);
+	case 0x7000:
+		return Chip8::_7XNN(opcode);
 	default:
 		return false;
 	}
@@ -48,7 +47,13 @@ bool Chip8::_0ZZZ(int opcode) {
 	}
 }
 bool Chip8::_8ZZZ(int opcode) {
-	return true;
+	int extractedOp = opcode & 0x000F;
+	switch (extractedOp) {
+	case(0x0000): //8XY0, Vx = Vy
+		return _8XY0(opcode);
+	default:
+		return false;
+	}
 }
 bool Chip8::_EZZZ(int opcode) {
 	return true;
@@ -109,7 +114,7 @@ bool Chip8::_2NNN(int opcode) {
 bool Chip8::_3XNN(int opcode) {
 	int registerNumber = (opcode & 0x0F00) >> 8;
 	int val = (opcode & 0x00FF);
-	std::cout << "Vx: " << registerNumber << ", V: " << val << std::endl;
+	
 	if (registers[registerNumber] == val) {
 		programCounter += 2;
 	}
@@ -136,3 +141,36 @@ bool Chip8::_5XY0(int opcode) {
 	return true;
 }
 
+//Const Operators
+//6XNN Vx = NN
+bool Chip8::_6XNN(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+	int val = (opcode & 0x00FF);
+
+	registers[reg] = val;
+
+	return true;
+}
+
+//7XNN Vx += NN
+bool Chip8::_7XNN(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+	int val = (opcode & 0x00FF);
+
+	registers[reg] += val;
+
+	//std::cout << "Reg: " << reg << ",Val: " << (int)registers[reg] << std::endl;
+
+	return true;
+}
+
+//Assign Operators Vx = Vy
+bool Chip8::_8XY0(int opcode) {
+
+	int reg1 = (opcode & 0x0F00) >> 8;
+	int reg2 = (opcode & 0x00F0) >> 4;
+
+	registers[1] = registers[2];
+
+	return true;
+}

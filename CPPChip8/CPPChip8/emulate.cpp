@@ -46,11 +46,13 @@ void Chip8::DebugOpCodeTest() {
 	OverrideMemory(0x204, 0xF0); 
 	OverrideMemory(0x205, 0x00);
 
-
+	//Increment register 5
+	OverrideMemory(0x206, 0x75);
+	OverrideMemory(0x207, 0x01);
 
 	//Jump to start opcode
-	OverrideMemory(0x206, 0x02); //Jump to 0x200 (aka beginning)
-	OverrideMemory(0x207, 0x00);
+	OverrideMemory(0x208, 0x02); //Jump to 0x200 (aka beginning)
+	OverrideMemory(0x209, 0x00);
 }
 
 void Chip8::OverrideMemory(int index, int8_t val) {
