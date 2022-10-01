@@ -8,7 +8,7 @@ public:
 	void Init();
 	int Tick();
 
-	int* GetDisplayBuffer();
+	int8_t* GetDisplayBuffer();
 	int GetCurrentInstruction(int offset);
 
 	void OverrideMemory(int index, int8_t val); //For easy memory injection for debugging opcodes.

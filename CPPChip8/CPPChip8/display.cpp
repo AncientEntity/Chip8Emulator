@@ -20,9 +20,20 @@ void Display::Close() {
 	std::cout << "Display Closed" << std::endl;
 }
 
-void Display::Render(int arr[64][32]) {
+void Display::Render(int8_t arr[64*32]) {
+	int c = 0;
+	SDL_RenderClear(renderer);
 	for (int x = 0; x < 64; x++) {
 		for (int y = 0; y < 32; y++) {
+			int div = c % 8;
+			int8_t bit = (arr[c / 8] >> (8-div)) & 0x1;
+			if (bit == 0) {
+				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+			}
+			else {
+				SDL_GetRenderDrawColor(renderer, 0, 0, 0, 0);
+			}
+
 			SDL_Rect *tempRect = new SDL_Rect();
 			tempRect->x = x * 5;
 			tempRect->y = y * 5;
@@ -30,6 +41,7 @@ void Display::Render(int arr[64][32]) {
 			tempRect->h = 5;
 			SDL_RenderDrawRect(renderer, tempRect);
 			delete tempRect;
+			c++;
 		}
 	}
 	SDL_RenderPresent(renderer);

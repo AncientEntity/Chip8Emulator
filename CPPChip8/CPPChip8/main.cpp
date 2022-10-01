@@ -27,6 +27,9 @@ int main(int argc, char* argv[])
         default:
             break;
         }
+
+        display->Render(chip->GetDisplayBuffer());
+
         SDL_Delay(500);
     }
 

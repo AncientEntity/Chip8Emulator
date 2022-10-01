@@ -61,6 +61,10 @@ int Chip8::GetCurrentInstruction(int offset) {
 	return (memory[programCounter + offset * 2] << 8) + memory[programCounter + 1 + offset * 2];
 }
 
+int8_t* Chip8::GetDisplayBuffer() {
+	return &(memory[0xF00]);
+}
+
 int** Chip8::CreateArray(int x, int y) {
 	int** arr = new int* [x];
 	for (int i = 0; i < x; i++) {
