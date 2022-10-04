@@ -15,7 +15,7 @@ public:
 	void DebugOpCodeTest();						//Injects memory with a few opcodes to test.
 private:
 	int8_t memory[4096];
-	int8_t registers[16];
+	uint8_t registers[16];
 	int addressRegister;
 	int stack[16];
 	int stackDepth = 0;

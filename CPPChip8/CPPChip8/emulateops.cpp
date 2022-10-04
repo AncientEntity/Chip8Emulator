@@ -174,3 +174,41 @@ bool Chip8::_8XY0(int opcode) {
 
 	return true;
 }
+
+//Math
+bool Chip8::_8XY4(int opcode) {
+
+	int reg1 = (opcode & 0x0F00) >> 8;
+	int reg2 = (opcode & 0x00F0) >> 4;
+
+	uint8_t before = registers[reg1];
+	registers[reg1] += registers[reg2];
+
+	if (before <= registers[reg1]) {
+		//Carry occured
+		registers[16] = 1;
+	}
+	else {
+		registers[16] = 0;
+	}
+
+}
+
+//Math
+bool Chip8::_8XY5(int opcode) {
+
+	int reg1 = (opcode & 0x0F00) >> 8;
+	int reg2 = (opcode & 0x00F0) >> 4;
+
+	uint8_t before = registers[reg1];
+	registers[reg1] -= registers[reg2];
+
+	if (before >= registers[reg1]) {
+		//Carry occured
+		registers[16] = 0;
+	}
+	else {
+		registers[16] = 1;
+	}
+
+}
