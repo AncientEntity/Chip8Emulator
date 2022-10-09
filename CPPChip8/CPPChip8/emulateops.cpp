@@ -192,6 +192,8 @@ bool Chip8::_8XY4(int opcode) {
 		registers[16] = 0;
 	}
 
+	return true;
+
 }
 
 //Math
@@ -210,5 +212,7 @@ bool Chip8::_8XY5(int opcode) {
 	else {
 		registers[16] = 1;
 	}
+
+	return true;
 
 }
