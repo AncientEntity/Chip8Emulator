@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-static const char* fileName = "ROMS\\test_opcode.ch8";
+static const char* fileName = "ROMS\\ibm.ch8";
 
 
 int main(int argc, char* argv[])
@@ -16,6 +16,7 @@ int main(int argc, char* argv[])
     display->Init();
     
     bool running = true;
+
     while (running) {
         int eventResult = display->HandleEvents();
         if (eventResult == 1) { running = 0; }
@@ -32,9 +33,10 @@ int main(int argc, char* argv[])
             break;
         }
 
+
         display->Render(chip->GetDisplayBuffer());
 
-        SDL_Delay(500);
+        //SDL_Delay(50);
     }
 
     display->Close();

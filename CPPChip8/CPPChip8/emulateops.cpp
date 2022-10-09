@@ -29,6 +29,16 @@ bool Chip8::_ZZZZ(int opcode) {
 		return Chip8::_6XNN(opcode);
 	case 0x7000:
 		return Chip8::_7XNN(opcode);
+	case 0x9000:
+		return Chip8::_9XY0(opcode);
+	case 0xA000:
+		return Chip8::_ANNN(opcode);
+	case 0xB000:
+		return Chip8::_BNNN(opcode);
+	case 0xC000:
+		return Chip8::_CXNN(opcode);
+	case 0xD000:
+		return Chip8::_DXYN(opcode);
 	default:
 		return false;
 	}
@@ -252,6 +262,87 @@ bool Chip8::_8XY5(int opcode) {
 	}
 	else {
 		registers[16] = 1;
+	}
+
+	return true;
+
+}
+
+//9XY0 Cond
+bool Chip8::_9XY0(int opcode) {
+	int reg1 = (opcode & 0x0F00) >> 8;
+	int reg2 = (opcode & 0x00F0) >> 4;
+
+	if (registers[reg1] != registers[reg2]) {
+		programCounter += 2;
+	}
+	return true;
+}
+
+//ANNN I = NNN
+bool Chip8::_ANNN(int opcode) {
+	
+	iRegister = opcode & 0x0FFF;
+
+	return true;
+}
+
+//BNNN PC = V0 + NNN
+bool Chip8::_BNNN(int opcode) {
+
+	programCounter = (opcode & 0x0FFF) + registers[0];
+
+	return true;
+}
+
+//Rand Vx = rand() & NN
+bool Chip8::_CXNN(int opcode) {
+
+	int reg = (opcode & 0x0F00) >> 8;
+	int val = opcode && 0x00FF;
+
+	registers[reg] = (rand() % 256) & val;
+
+	return true;
+}
+
+//Display draw(Vx,Vy,N)
+bool Chip8::_DXYN(int opcode) {
+	int x = (opcode & 0x0F00) >> 8;
+	int y = (opcode & 0x00F0) >> 4;
+	int num = (opcode & 0x000F);		  //Height of Sprite
+	
+	int bufferPos = 0xF00 + x + (y * 8); //Pos in memory[]
+	int iPos = iRegister;				  //Copy of iRegister
+	
+	registers[0xF] = 0;
+
+	//Temporary should be xoring each bit individually
+	for (int h = 0; h < num; h++) {
+
+		uint8_t newVal = 0;
+		uint8_t mask = 0b00000001;
+
+
+		//xor each bit
+		for (int i = 0; i < 8; i++) {
+
+			uint8_t buffMask = (mask & memory[bufferPos]);
+			uint8_t memMask = (mask & memory[iPos]);
+			uint8_t v = buffMask ^ memMask;
+			newVal += v;
+
+			if (buffMask != 0 && v == 0) {
+				registers[0xF] = 1;
+			}
+
+			mask = mask << 1;
+		}
+		memory[0xF00 + x + ((y+h) * 8)] = newVal;
+
+		//memory[bufferPos] ^= memory[iPos];
+		bufferPos += 8;
+		iPos += 1;
 	}
 
 	return true;

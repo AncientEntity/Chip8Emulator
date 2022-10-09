@@ -21,17 +21,22 @@ void Display::Close() {
 }
 
 void Display::Render(int8_t arr[64*32]) {
-	int c = 0;
 	SDL_RenderClear(renderer);
-	for (int x = 0; x < 64; x++) {
-		for (int y = 0; y < 32; y++) {
+	for (int y = 0; y < 32; y++) {
+		for (int x = 0; x < 64; x++) {
+
+			int c = x + (y * 64);
+
 			int div = c % 8;
-			int8_t bit = (arr[c / 8] >> (8-div)) & 0x1;
+			int8_t bit = (arr[c / 8] >> (8 - div)) & 0x1;
+
+
+
 			if (bit == 0) {
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			}
 			else {
-				SDL_GetRenderDrawColor(renderer, 0, 0, 0, 0);
+				SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
 			}
 
 			SDL_Rect *tempRect = new SDL_Rect();
@@ -39,9 +44,8 @@ void Display::Render(int8_t arr[64*32]) {
 			tempRect->y = y * 5;
 			tempRect->w = 5;
 			tempRect->h = 5;
-			SDL_RenderDrawRect(renderer, tempRect);
+			SDL_RenderFillRect(renderer, tempRect);
 			delete tempRect;
-			c++;
 		}
 	}
 	SDL_RenderPresent(renderer);

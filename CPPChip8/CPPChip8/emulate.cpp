@@ -1,5 +1,6 @@
 #include "main.h"
 
+
 Chip8::Chip8() { Init(); }
 Chip8::~Chip8()
 {
@@ -13,6 +14,13 @@ void Chip8::Init() {
 	for (int i = 0; i < 16; i++) { registers[i] = 0; stack[i] = 0; }
 	addressRegister = 0;
 
+
+	//Initalize Font Memory
+	for (int i = 0; i < 80; i++) {
+		memory[i] = fontSet[i];
+	}
+
+
 	std::cout << "Chip8 Initialized" << std::endl;
 }
 
@@ -22,6 +30,7 @@ int Chip8::Tick() {
 	std::cout << std::hex << opcode << std::endl;
 
 	bool instructResult = _ZZZZ(opcode); //Opcode Top Level Filter
+
 
 	programCounter += 2;
 	if (programCounter >= 4096) {
