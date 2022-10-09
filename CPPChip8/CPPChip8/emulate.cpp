@@ -82,6 +82,7 @@ void Chip8::LoadROM(const char* fileName) {
 		std::cout << "Error reading rom..." << std::endl;
 	}
 
+	in.close();
 
 }
 
