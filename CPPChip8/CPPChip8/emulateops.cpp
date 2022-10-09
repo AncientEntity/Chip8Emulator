@@ -51,6 +51,12 @@ bool Chip8::_8ZZZ(int opcode) {
 	switch (extractedOp) {
 	case(0x0000): //8XY0, Vx = Vy
 		return _8XY0(opcode);
+	case(0x0001):
+		return _8XY1(opcode);
+	case(0x0002):
+		return _8XY2(opcode);
+	case(0x0003):
+		return _8XY3(opcode);
 	default:
 		return false;
 	}
@@ -164,6 +170,7 @@ bool Chip8::_7XNN(int opcode) {
 	return true;
 }
 
+
 //Assign Operators Vx = Vy
 bool Chip8::_8XY0(int opcode) {
 
@@ -174,6 +181,41 @@ bool Chip8::_8XY0(int opcode) {
 
 	return true;
 }
+
+//BitOp
+
+bool Chip8::_8XY1(int opcode) {//Vx = Vx | Vy
+
+	int reg1 = (opcode & 0x0F00) >> 8;
+	int reg2 = (opcode & 0x00F0) >> 4;
+
+	registers[reg1] = registers[reg1] | registers[reg2];
+
+	return true;
+}
+
+
+bool Chip8::_8XY2(int opcode) {//Vx = Vx & Vy
+
+	int reg1 = (opcode & 0x0F00) >> 8;
+	int reg2 = (opcode & 0x00F0) >> 4;
+
+	registers[reg1] = registers[reg1] & registers[reg2];
+
+	return true;
+}
+
+bool Chip8::_8XY3(int opcode) { //Vx = Vx ^ Vy
+
+	int reg1 = (opcode & 0x0F00) >> 8;
+	int reg2 = (opcode & 0x00F0) >> 4;
+
+	registers[reg1] = registers[reg1] ^ registers[reg2];
+
+	return true;
+}
+
+
 
 //Math
 bool Chip8::_8XY4(int opcode) {
@@ -196,7 +238,6 @@ bool Chip8::_8XY4(int opcode) {
 
 }
 
-//Math
 bool Chip8::_8XY5(int opcode) {
 
 	int reg1 = (opcode & 0x0F00) >> 8;

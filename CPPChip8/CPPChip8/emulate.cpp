@@ -55,6 +55,36 @@ void Chip8::DebugOpCodeTest() {
 	OverrideMemory(0x209, 0x00);
 }
 
+void Chip8::LoadROM(const char* fileName) {
+	std::ifstream in(fileName, std::ios_base::in | std::ios_base::binary);
+
+	in.seekg(0,std::ios::end);
+
+	int size = in.tellg();
+	if (size == -1) {
+		std::cout << "ROM FILE DOESNT EXIST OR COULDN'T BE OPENED." << std::endl;
+		return;
+	}
+	else {
+		std::cout << "Rom of size " << size << " has been loaded." << std::endl;
+	}
+	std::cout << size << std::endl;
+	std::string str(size, '\0');
+	in.seekg(0);
+	if (in.read(&str[0], size)) {
+		//std::cout << str << std::endl;
+		for (int i = 0; i < size; i++) {
+			memory[i+0x200] = str[i]; //0x200+ cause that's where the program memory starts by default
+		}
+		std::cout << "Rom successfully read." << std::endl;
+	}
+	else {
+		std::cout << "Error reading rom..." << std::endl;
+	}
+
+
+}
+
 void Chip8::OverrideMemory(int index, int8_t val) {
 	memory[index] = val;
 }
