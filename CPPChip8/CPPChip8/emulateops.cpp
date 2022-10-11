@@ -67,6 +67,14 @@ bool Chip8::_8ZZZ(int opcode) {
 		return _8XY2(opcode);
 	case(0x0003):
 		return _8XY3(opcode);
+	case(0x0004):
+		return _8XY4(opcode);
+	case(0x0005):
+		return _8XY5(opcode);
+	case(0x0006):
+		return _8XY6(opcode);
+	case(0x000E):
+		return _8XYE(opcode);
 	default:
 		return false;
 	}
@@ -173,9 +181,9 @@ bool Chip8::_7XNN(int opcode) {
 	int reg = (opcode & 0x0F00) >> 8;
 	int val = (opcode & 0x00FF);
 
-	registers[reg] += val;
+	registers[reg] += (uint8_t)val;
 
-	//std::cout << "Reg: " << reg << ",Val: " << (int)registers[reg] << std::endl;
+	std::cout << "Reg: " << reg << ",Val: " << (int)registers[reg] << std::endl;
 
 	return true;
 }
@@ -268,6 +276,27 @@ bool Chip8::_8XY5(int opcode) {
 
 }
 
+//BitOp BitShifting
+
+//8Xy6 Vx >>= 1
+bool Chip8::_8XY6(int opcode) {
+	int reg = opcode & 0x0F00 >> 8;
+	registers[0xF] = registers[reg] & 0x1;
+	registers[reg] = registers[reg] >> 1;
+
+	return true;
+}
+//8Xy6 Vx <<= 1
+bool Chip8::_8XYE(int opcode) {
+	int reg = opcode & 0x0F00 >> 8;
+	registers[0xF] = (registers[reg] & 0x8000) >> 7;
+	registers[reg] = registers[reg] << 1;
+
+	return true;
+}
+
+
+
 //9XY0 Cond
 bool Chip8::_9XY0(int opcode) {
 	int reg1 = (opcode & 0x0F00) >> 8;
@@ -308,8 +337,8 @@ bool Chip8::_CXNN(int opcode) {
 
 //Display draw(Vx,Vy,N)
 bool Chip8::_DXYN(int opcode) {
-	int x = (opcode & 0x0F00) >> 8;
-	int y = (opcode & 0x00F0) >> 4;
+	int x = registers[(opcode & 0x0F00) >> 8];
+	int y = registers[(opcode & 0x00F0) >> 4];
 	int num = (opcode & 0x000F);		  //Height of Sprite
 	
 	int bufferPos = 0xF00 + x + (y * 8); //Pos in memory[]
@@ -317,7 +346,7 @@ bool Chip8::_DXYN(int opcode) {
 	
 	registers[0xF] = 0;
 
-	//Temporary should be xoring each bit individually
+
 	for (int h = 0; h < num; h++) {
 
 		uint8_t newVal = 0;
@@ -338,7 +367,7 @@ bool Chip8::_DXYN(int opcode) {
 
 			mask = mask << 1;
 		}
-		memory[0xF00 + x + ((y+h) * 8)] = newVal;
+		memory[bufferPos] = newVal;
 
 		//memory[bufferPos] ^= memory[iPos];
 		bufferPos += 8;

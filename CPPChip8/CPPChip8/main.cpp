@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-static const char* fileName = "ROMS\\ibm.ch8";
+static const char* fileName = "ROMS\\test_opcode.ch8";
 
 
 int main(int argc, char* argv[])
@@ -36,7 +36,7 @@ int main(int argc, char* argv[])
 
         display->Render(chip->GetDisplayBuffer());
 
-        //SDL_Delay(50);
+        SDL_Delay(100);
     }
 
     display->Close();
