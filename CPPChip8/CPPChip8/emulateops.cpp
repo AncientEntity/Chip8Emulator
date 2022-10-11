@@ -113,6 +113,9 @@ bool Chip8::_00E0(int opcode) {
 
 	return true;
 }
+
+
+//THIS DEFINITELY DOESN't WORK PROPERLY
 bool Chip8::_00EE(int opcode) {
 	
 	programCounter = (opcode & 0x0FFF) - 2;
@@ -148,7 +151,7 @@ bool Chip8::_3XNN(int opcode) {
 //3XNN if Vx != NN skip next instruction
 bool Chip8::_4XNN(int opcode) {
 	int registerNumber = (opcode & 0x0F00) >> 8;
-	int val = (opcode & 0x00FF);
+	uint8_t val = (opcode & 0x00FF);
 	if (registers[registerNumber] != val) {
 		programCounter += 2;
 	}
@@ -181,6 +184,8 @@ bool Chip8::_7XNN(int opcode) {
 	int reg = (opcode & 0x0F00) >> 8;
 	int val = (opcode & 0x00FF);
 
+	std::cout << "BFORE" << registers[reg] << std::endl;
+
 	registers[reg] += (uint8_t)val;
 
 	std::cout << "Reg: " << reg << ",Val: " << (int)registers[reg] << std::endl;
@@ -195,7 +200,7 @@ bool Chip8::_8XY0(int opcode) {
 	int reg1 = (opcode & 0x0F00) >> 8;
 	int reg2 = (opcode & 0x00F0) >> 4;
 
-	registers[1] = registers[2];
+	registers[reg1] = registers[reg2];
 
 	return true;
 }
@@ -246,10 +251,10 @@ bool Chip8::_8XY4(int opcode) {
 
 	if (before <= registers[reg1]) {
 		//Carry occured
-		registers[16] = 1;
+		registers[0xF] = 1;
 	}
 	else {
-		registers[16] = 0;
+		registers[0xF] = 0;
 	}
 
 	return true;
@@ -266,10 +271,10 @@ bool Chip8::_8XY5(int opcode) {
 
 	if (before >= registers[reg1]) {
 		//Carry occured
-		registers[16] = 0;
+		registers[0xF] = 0;
 	}
 	else {
-		registers[16] = 1;
+		registers[0xF] = 1;
 	}
 
 	return true;
@@ -337,8 +342,8 @@ bool Chip8::_CXNN(int opcode) {
 
 //Display draw(Vx,Vy,N)
 bool Chip8::_DXYN(int opcode) {
-	int x = registers[(opcode & 0x0F00) >> 8];
-	int y = registers[(opcode & 0x00F0) >> 4];
+	uint8_t x = registers[(opcode & 0x0F00) >> 8];
+	uint8_t y = registers[(opcode & 0x00F0) >> 4];
 	int num = (opcode & 0x000F);		  //Height of Sprite
 	
 	int bufferPos = 0xF00 + x + (y * 8); //Pos in memory[]

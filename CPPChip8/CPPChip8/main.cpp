@@ -36,6 +36,7 @@ int main(int argc, char* argv[])
 
         display->Render(chip->GetDisplayBuffer());
 
+        //std::cin.get();
         SDL_Delay(100);
     }
 

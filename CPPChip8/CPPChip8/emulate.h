@@ -8,7 +8,7 @@ public:
 	void Init();
 	int Tick();
 
-	int8_t* GetDisplayBuffer();
+	uint8_t* GetDisplayBuffer();
 	int GetCurrentInstruction(int offset);
 
 	void LoadROM(const char* fileName);
@@ -16,7 +16,7 @@ public:
 	void OverrideMemory(int index, int8_t val); //For easy memory injection for debugging opcodes.
 	void DebugOpCodeTest();						//Injects memory with a few opcodes to test.
 private:
-	int8_t memory[4096];
+	uint8_t memory[4096];
 	uint8_t registers[16];
 	int addressRegister;
 	int stack[16];

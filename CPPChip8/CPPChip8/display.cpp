@@ -20,7 +20,7 @@ void Display::Close() {
 	std::cout << "Display Closed" << std::endl;
 }
 
-void Display::Render(int8_t arr[64*32]) {
+void Display::Render(uint8_t arr[64*32]) {
 	SDL_RenderClear(renderer);
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 64; x++) {

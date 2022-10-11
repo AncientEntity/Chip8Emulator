@@ -6,7 +6,7 @@ public:
 	~Display();
 
 	void Init();
-	void Render(int8_t arr[64*32]);
+	void Render(uint8_t arr[64*32]);
 	int HandleEvents();
 	void Close();
 private:

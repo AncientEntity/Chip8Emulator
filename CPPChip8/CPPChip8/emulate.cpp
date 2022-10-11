@@ -103,7 +103,7 @@ int Chip8::GetCurrentInstruction(int offset) {
 	return (memory[programCounter + offset * 2] << 8) + memory[programCounter + 1 + offset * 2];
 }
 
-int8_t* Chip8::GetDisplayBuffer() {
+uint8_t* Chip8::GetDisplayBuffer() {
 	return &(memory[0xF00]);
 }
 
