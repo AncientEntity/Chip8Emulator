@@ -22,13 +22,15 @@ void Display::Close() {
 
 void Display::Render(uint8_t arr[64*32]) {
 	SDL_RenderClear(renderer);
+	int byteNumber = 0;
+	int c = 0;
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 64; x++) {
 
-			int c = x + (y * 64);
+			//int c = x + (y * 64);
 
-			int div = c % 8;
-			int8_t bit = (arr[c / 8] >> (8 - div)) & 0x1;
+			//int div = c % 8;
+			int8_t bit = (arr[byteNumber] >> (8-c)) & 0x1;//(arr[c / 8] >> (8 - div)) & 0x1;
 
 
 
@@ -46,6 +48,12 @@ void Display::Render(uint8_t arr[64*32]) {
 			tempRect->h = 5;
 			SDL_RenderFillRect(renderer, tempRect);
 			delete tempRect;
+
+			c++;
+			if (c % 8 == 0) {
+				c = 0;
+				byteNumber++;
+			}
 		}
 	}
 	SDL_RenderPresent(renderer);

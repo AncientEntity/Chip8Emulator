@@ -344,9 +344,9 @@ bool Chip8::_CXNN(int opcode) {
 bool Chip8::_DXYN(int opcode) {
 	uint8_t x = registers[(opcode & 0x0F00) >> 8];
 	uint8_t y = registers[(opcode & 0x00F0) >> 4];
-	int num = (opcode & 0x000F);		  //Height of Sprite
+	uint8_t num = (opcode & 0x000F);		  //Height of Sprite
 	
-	int bufferPos = 0xF00 + x + (y * 8); //Pos in memory[]
+	int bufferPos = 0xF00 + (x/8) + (y * 8); //Pos in memory[]
 	int iPos = iRegister;				  //Copy of iRegister
 	
 	registers[0xF] = 0;

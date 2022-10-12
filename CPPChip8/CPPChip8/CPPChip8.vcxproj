@@ -116,12 +116,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\Ryan\Desktop\Projects\Chip8Emulator\CPPChip8\ROMS;C:\Users\Ryan\Desktop\Projects\Chip8Emulator\CPPChip8\SDL2\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Ryan\Desktop\Projects\Chip8Emulator\CPPChip8\ROMS;C:\Users\Ryan\Desktop\Projects\Chip8Emulator\CPPChip8\SDL2\include;D:\Personal Archive\Computer Science\Emulators\Chip8Emulator\CPPChip8\SDL2\include;D:\Personal Archive\Computer Science\Emulators\Chip8Emulator\CPPChip8\CPPChip8\ROMS;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Users\Ryan\Desktop\Projects\Chip8Emulator\CPPChip8\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Personal Archive\Computer Science\Emulators\Chip8Emulator\CPPChip8\SDL2\lib\x64;C:\Users\Ryan\Desktop\Projects\Chip8Emulator\CPPChip8\SDL2\lib\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>SDL2.lib;SDL2main.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

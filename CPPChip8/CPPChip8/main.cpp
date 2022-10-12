@@ -3,13 +3,13 @@
 
 #include "main.h"
 
-static const char* fileName = "ROMS\\test_opcode.ch8";
+static const char* fileName = "ROMS\\ibm.ch8";
 
 
 int main(int argc, char* argv[])
 {
     Chip8 *chip = new Chip8();
-    chip->DebugOpCodeTest();
+    //chip->DebugOpCodeTest();
     chip->LoadROM(fileName);
 
     Display* display = new Display();
