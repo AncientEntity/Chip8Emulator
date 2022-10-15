@@ -69,7 +69,6 @@ private:
 	bool _BNNN(int opcode);
 	bool _CXNN(int opcode);
 	bool _DXYN(int opcode);
-	bool _DXYNHelper_ModifyExactBit(int bitNumber, int val);
 
 	bool _EX8E(int opcode);
 	bool _EXA1(int opcode);

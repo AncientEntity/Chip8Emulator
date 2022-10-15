@@ -345,23 +345,12 @@ bool Chip8::_DXYN(int opcode) {
 	uint8_t x = registers[(opcode & 0x0F00) >> 8];
 	uint8_t y = registers[(opcode & 0x00F0) >> 4];
 	uint8_t num = (opcode & 0x000F);		  //Height of Sprite
-	
-	int bufferPos = 0xF00 + (x/8) + (y * 8); //Pos in memory[]
+
+	int bufferPos = 0xF00 + (x / 8) + (y * 8); //Pos in memory[]
 	int iPos = iRegister;				  //Copy of iRegister
-	
+
 	registers[0xF] = 0;
 
-
-	//for (int i = 0; i < 32 * 64; i++) {
-	//	
-	//	_DXYNHelper_ModifyExactBit(i, memory[iPos]);
-	//	
-	//	
-	//	
-	//	if (i % 8 == 0) {
-	//		iPos++;
-	//	}
-	//}
 
 	int bitOffset = x % 8;
 
@@ -372,36 +361,10 @@ bool Chip8::_DXYN(int opcode) {
 		uint8_t spriteMask = 0b10000000;
 
 
-		bool rollover = false;
-		//xor each bit
-		for (int i = bitOffset; i < bitOffset+8; i++) {
+		memory[bufferPos] ^= memory[iPos] >> bitOffset;
+		memory[bufferPos + 1] ^= memory[iPos] << (8 - bitOffset);
 
-			uint8_t buffMask = (mask & memory[bufferPos]);
-			uint8_t memMask = (spriteMask & memory[iPos]) << bitOffset;
-			uint8_t v = buffMask ^ memMask;
-			newVal -= mask;
-			newVal += v;
 
-			if (buffMask != 0 && v == 0) {
-				registers[0xF] = 1;
-			}
-
-			mask = mask >> 1;
-			spriteMask = spriteMask >> 1;
-
-			if (i == 7) {
-				memory[bufferPos] = newVal;
-				bufferPos += 1;
-				newVal = memory[bufferPos];
-				rollover = true;
-				mask = 0b10000000;
-
-			}
-		}
-		memory[bufferPos] = newVal;
-
-		//memory[bufferPos] ^= memory[iPos];
-		if (rollover) { bufferPos--; }
 		bufferPos += 8;
 		iPos += 1;
 	}
@@ -410,17 +373,3 @@ bool Chip8::_DXYN(int opcode) {
 
 }
 
-
-bool Chip8::_DXYNHelper_ModifyExactBit(int bitNumber, int val) {
-	int byteNum = bitNumber / 8;
-	int bitOffset = bitNumber % 8;
-
-	uint8_t mask = 0b1 << bitOffset;
-
-	uint8_t bit = (memory[0xF00 + byteNum] & mask) ^ (val & mask);
-
-	memory[0xF00+byteNum] |= bit;
-
-
-	return true;
-}

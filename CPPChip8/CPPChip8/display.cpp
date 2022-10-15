@@ -23,9 +23,11 @@ void Display::Close() {
 void Display::Render(uint8_t arr[64*32]) {
 	SDL_RenderClear(renderer);
 	int byteNumber = 0;
-	int c = 0;
+	int c = -1;
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 64; x++) {
+
+			c++;
 
 			//int c = x + (y * 64);
 
@@ -49,8 +51,7 @@ void Display::Render(uint8_t arr[64*32]) {
 			SDL_RenderFillRect(renderer, tempRect);
 			delete tempRect;
 
-			c++;
-			if (c % 8 == 0) {
+			if (c == 8) {
 				c = 0;
 				byteNumber++;
 			}
