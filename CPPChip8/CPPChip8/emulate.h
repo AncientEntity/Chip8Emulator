@@ -70,7 +70,7 @@ private:
 	bool _CXNN(int opcode);
 	bool _DXYN(int opcode);
 
-	bool _EX8E(int opcode);
+	bool _EX9E(int opcode);
 	bool _EXA1(int opcode);
 
 	bool _FX07(int opcode);
@@ -104,6 +104,8 @@ private:
 						  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
 						  0xF0, 0x80, 0xF0, 0x80, 0x80}; //F
 
+
+	uint8_t _GetKey();
 
 };
 

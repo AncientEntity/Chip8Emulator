@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-static const char* fileName = "ROMS\\test_opcode.ch8";
+static const char* fileName = "ROMS\\brix.ch8";
 
 
 int main(int argc, char* argv[])
@@ -11,6 +11,10 @@ int main(int argc, char* argv[])
     Chip8 *chip = new Chip8();
     //chip->DebugOpCodeTest();
     chip->LoadROM(fileName);
+    //chip->OverrideMemory(0x200, 0xF0);
+    //chip->OverrideMemory(0x201, 0x0A);
+    //chip->OverrideMemory(0x202, 0x12);
+    //chip->OverrideMemory(0x203, 0x00);
 
     Display* display = new Display();
     display->Init();
@@ -37,7 +41,7 @@ int main(int argc, char* argv[])
         display->Render(chip->GetDisplayBuffer());
 
         //std::cin.get();
-        SDL_Delay(100);
+        //SDL_Delay(100);
     }
 
     display->Close();

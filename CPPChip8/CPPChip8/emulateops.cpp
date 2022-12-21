@@ -2,7 +2,7 @@
 
 bool Chip8::_ZZZZ(int opcode) {
 	int extractedOp = opcode & 0xF000;
-	std::cout << "Extracted: " << extractedOp << ", POS: " << programCounter << std::endl;
+	//std::cout << "Extracted: " << extractedOp << ", POS: " << programCounter << std::endl;
 	switch (extractedOp) {
 		//Top Level Cases
 	case 0x0000:
@@ -80,10 +80,31 @@ bool Chip8::_8ZZZ(int opcode) {
 	}
 }
 bool Chip8::_EZZZ(int opcode) {
-	return true;
+	int extractedOp = opcode & 0x00FF;
+	switch (extractedOp) {
+	case(0x009E): //8XY0, Vx = Vy
+		return _EX9E(opcode);
+	case(0x00A1):
+		return _EXA1(opcode);
+	default:
+		return false;
+	}
 }
 bool Chip8::_FZZZ(int opcode) {
-	return true;
+	int extractedOp = opcode & 0x00FF;
+	switch (extractedOp) {
+	//case(0x0007): //Instruction NEI
+	//	return _FX07(opcode);
+	case(0x000A):
+		return _FX0A(opcode);
+	case(0x001E):
+		return _FX1E(opcode);
+	case(0x0065):
+		return _FX65(opcode);
+
+	default:
+		return false;
+	}
 }
 
 //Actual Opcodes
@@ -128,7 +149,7 @@ bool Chip8::_00EE(int opcode) {
 bool Chip8::_1NNN(int opcode) {
 	int extractedAddress = opcode & 0x0FFF;
 	programCounter = extractedAddress - 2;
-	std::cout << "Jump to: " << programCounter << std::endl;
+	//std::cout << "Jump to: " << programCounter << std::endl;
 	return true;
 }
 
@@ -184,11 +205,11 @@ bool Chip8::_7XNN(int opcode) {
 	int reg = (opcode & 0x0F00) >> 8;
 	int val = (opcode & 0x00FF);
 
-	std::cout << "BFORE" << registers[reg] << std::endl;
+	//std::cout << "BFORE" << registers[reg] << std::endl;
 
 	registers[reg] += (uint8_t)val;
 
-	std::cout << "Reg: " << reg << ",Val: " << (int)registers[reg] << std::endl;
+	//std::cout << "Reg: " << reg << ",Val: " << (int)registers[reg] << std::endl;
 
 	return true;
 }
@@ -373,3 +394,63 @@ bool Chip8::_DXYN(int opcode) {
 
 }
 
+//KeyOp if key() == Vx
+bool Chip8::_EX9E(int opcode) {
+
+	int reg = (opcode & 0x0F00) >> 8;
+	if (registers[reg] == _GetKey()) {
+		programCounter += 2;
+	}
+
+	return true;
+}
+
+//KeyOp if key() != Vx
+bool Chip8::_EXA1(int opcode) {
+
+	int reg = (opcode & 0x0F00) >> 8;
+	if (registers[reg] != _GetKey()) {
+		programCounter += 2;
+	}
+
+	return true;
+}
+
+//KeyOp await key() then save to Vx
+bool Chip8::_FX0A(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	uint8_t key = 0xFF;
+	while (key == 0xFF) {
+		key = _GetKey();
+	}
+
+	registers[reg] = key;
+	std::cout << key << std::endl;
+
+	return true;
+}
+
+//I += VX
+bool Chip8::_FX1E(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	iRegister += registers[reg];
+
+	return true;
+}
+
+//Reg Load
+bool Chip8::_FX65(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	int iReg = iRegister;
+
+	for (int i = 0; i < reg; i++) {
+		registers[i] = memory[iReg];
+		iReg++;
+	}
+
+
+	return true;
+}
