@@ -2,7 +2,7 @@
 
 bool Chip8::_ZZZZ(int opcode) {
 	int extractedOp = opcode & 0xF000;
-	//std::cout << "Extracted: " << extractedOp << ", POS: " << programCounter << std::endl;
+	std::cout << "Extracted: " << extractedOp << ", POS: " << programCounter << std::endl;
 	switch (extractedOp) {
 		//Top Level Cases
 	case 0x0000:
@@ -99,6 +99,10 @@ bool Chip8::_FZZZ(int opcode) {
 		return _FX0A(opcode);
 	case(0x001E):
 		return _FX1E(opcode);
+	case(0x0029):
+		return _FX29(opcode);
+	case (0x0055):
+		return _FX55(opcode);
 	case(0x0065):
 		return _FX65(opcode);
 
@@ -136,11 +140,10 @@ bool Chip8::_00E0(int opcode) {
 }
 
 
-//THIS DEFINITELY DOESN't WORK PROPERLY
+//return; from subroutine
 bool Chip8::_00EE(int opcode) {
-	
-	programCounter = (opcode & 0x0FFF) - 2;
-	
+	stackDepth--;
+	programCounter = stack[stackDepth];//(opcode & 0x0FFF) - 2;
 	return true;
 }
 
@@ -426,7 +429,7 @@ bool Chip8::_FX0A(int opcode) {
 	}
 
 	registers[reg] = key;
-	std::cout << key << std::endl;
+	std::cout << "Awaited: " << key << std::endl;
 
 	return true;
 }
@@ -440,15 +443,37 @@ bool Chip8::_FX1E(int opcode) {
 	return true;
 }
 
+//MEM I = Sprite_ADDR(VX)
+bool Chip8::_FX29(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	//self.gpio[self.vx] * 5) & 0x0FFF
+
+	iRegister = registers[reg] * 5;
+
+	return true;
+}
+
+
+//Reg Dump
+bool Chip8::_FX55(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	for (int i = 0; i < reg + 1; i++) {
+		memory[iRegister + i] = registers[i];
+	}
+
+
+	return true;
+}
+
+
 //Reg Load
 bool Chip8::_FX65(int opcode) {
 	int reg = (opcode & 0x0F00) >> 8;
 
-	int iReg = iRegister;
-
-	for (int i = 0; i < reg; i++) {
-		registers[i] = memory[iReg];
-		iReg++;
+	for (int i = 0; i < reg + 1; i++) {
+		registers[i] = memory[iRegister + i];
 	}
 
 

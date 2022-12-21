@@ -39,4 +39,7 @@
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="ROMS\clock.ch8" />
+  </ItemGroup>
 </Project>

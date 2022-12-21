@@ -27,7 +27,7 @@ void Chip8::Init() {
 int Chip8::Tick() {
 
 	opcode = (memory[programCounter] << 8) + memory[programCounter + 1];
-	//std::cout << std::hex << opcode << std::endl;
+	std::cout << std::hex << opcode << std::endl;
 
 	bool instructResult = _ZZZZ(opcode); //Opcode Top Level Filter
 
