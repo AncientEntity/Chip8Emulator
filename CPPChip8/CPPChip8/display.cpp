@@ -25,7 +25,7 @@ void Display::Close() {
 void Display::Render(uint8_t arr[64*32]) {
 	SDL_RenderClear(renderer);
 	int byteNumber = 0;
-	int c = -1;
+	int c = 0;
 	for (int y = 0; y < 32; y++) {
 		for (int x = 0; x < 64; x++) {
 
@@ -38,7 +38,7 @@ void Display::Render(uint8_t arr[64*32]) {
 
 
 
-			if (bit == 0) {
+			if (bit == 1) {
 				SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 			}
 			else {

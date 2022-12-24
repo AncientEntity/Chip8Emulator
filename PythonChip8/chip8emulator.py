@@ -413,6 +413,6 @@ def log(text, force=False):
 DO_LOGGING = False
 pygame.init()
 c = CHIP8()
-c.loadRom("ROMS/test_opcode.ch8")
+c.loadRom("ROMS/chip8-test-suite.ch8")
 while True:
     c.tick()

@@ -3,7 +3,7 @@
 
 #include "main.h"
 
-static const char* fileName = "ROMS\\randomnumber.ch8";
+static const char* fileName = "ROMS\\breakout.ch8";
 
 
 int main(int argc, char* argv[])
@@ -32,7 +32,7 @@ int main(int argc, char* argv[])
     while (running) {
         int eventResult = display->HandleEvents();
         if (eventResult == 1) { running = 0; }
-        int tickResult = chip->Tick(tickDelta);
+        int tickResult = chip->Tick(tickDelta * 60.0);
         switch(tickResult) {
         case (-1):
             std::cout << "CHIP-8 ERROR Memory Out Of Bounds Exception" << std::endl;

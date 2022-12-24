@@ -322,22 +322,23 @@ bool Chip8::_8XY5(int opcode) {
 //8Xy6 Vx >>= 1
 bool Chip8::_8XY6(int opcode) {
 	int reg = (opcode & 0x0F00) >> 8;
-	registers[0xF] = (registers[reg] % 2 != 0);
+	int flag = (registers[reg] % 2 != 0);
 	registers[reg] = registers[reg] >> 1;
-
+	registers[0xF] = flag;
 	return true;
 }
+
 
 //Vx = Vy - Vx
 bool Chip8::_8XY7(int opcode) {
 	int regX = (opcode & 0x0F00) >> 8;
 	int regY = (opcode & 0x00F0) >> 4;
+	int flag = 1;
 	if (registers[regY] < registers[regX]) {
-		registers[0xF] = 0;
-	} else {
-		registers[0xF] = 1;
+		flag = 0;
 	}
 	registers[regX] = registers[regY] - registers[regX];
+	registers[0xF] = flag;
 
 	return true;
 }
@@ -345,9 +346,9 @@ bool Chip8::_8XY7(int opcode) {
 //8Xy6 Vx <<= 1
 bool Chip8::_8XYE(int opcode) {
 	int reg = (opcode & 0x0F00) >> 8;
-	registers[0xF] = (registers[reg] & 0x8000) >> 7;
+	int flag = ((registers[reg] >> 7) % 2 != 0);;// >> 7;
 	registers[reg] = registers[reg] << 1;
-
+	registers[0xF] = flag;
 	return true;
 }
 
@@ -411,10 +412,13 @@ bool Chip8::_DXYN(int opcode) {
 		uint8_t mask = 0b10000000 >> bitOffset;
 		uint8_t spriteMask = 0b10000000;
 
+		if ((memory[bufferPos] & (memory[iPos] >> bitOffset)) || (memory[bufferPos + 1] & (memory[iPos] << (8 - bitOffset)))) {
+			registers[0xF] = 1;
+		}
+
 
 		memory[bufferPos] ^= memory[iPos] >> bitOffset;
 		memory[bufferPos + 1] ^= memory[iPos] << (8 - bitOffset);
-
 
 		bufferPos += 8;
 		iPos += 1;
