@@ -145,6 +145,7 @@
     <ClCompile Include="display.cpp" />
     <ClCompile Include="emulate.cpp" />
     <ClCompile Include="emulateops.cpp" />
+    <ClCompile Include="helpers.h" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,7 +154,10 @@
     <ClInclude Include="main.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ROMS\chip8-test-suite.ch8" />
     <None Include="ROMS\clock.ch8" />
+    <None Include="ROMS\lunar.ch8" />
+    <None Include="ROMS\maze.ch8" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

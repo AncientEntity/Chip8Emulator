@@ -14,7 +14,6 @@ void Chip8::Init() {
 	for (int i = 0; i < 16; i++) { registers[i] = 0; stack[i] = 0; }
 	addressRegister = 0;
 
-
 	//Initalize Font Memory
 	for (int i = 0; i < 80; i++) {
 		memory[i] = fontSet[i];
@@ -24,14 +23,24 @@ void Chip8::Init() {
 	std::cout << "Chip8 Initialized" << std::endl;
 }
 
-int Chip8::Tick() {
+int Chip8::Tick(double timePast) {
+
+
+	delayTimerRaw -= timePast;
+	soundTimerRaw -= timePast;
+	if (delayTimerRaw < 0) {
+		delayTimerRaw = 0;
+	}
+	if (soundTimerRaw < 0) {
+		soundTimerRaw = 0;
+	}
 
 	opcode = (memory[programCounter] << 8) + memory[programCounter + 1];
-	std::cout << std::hex << opcode << std::endl;
+	if (debugMode) {
+		std::cout << std::hex << opcode << std::endl;
+	}
 
 	bool instructResult = _ZZZZ(opcode); //Opcode Top Level Filter
-
-
 	programCounter += 2;
 	if (programCounter >= 4096) {
 		return -1;
@@ -126,8 +135,11 @@ void Chip8::DestroyArray(int** arr, int x, int y) {
 	delete[] arr;
 }
 
+
+
 //0xFF if no key, 0-F for which key. Chip-8 can only really get 1 key at a time. This will favour lower keys but it's good enough for now.
 uint8_t Chip8::_GetKey() {
+
 	SDL_Event e;
 	SDL_PollEvent(&e);
 
@@ -135,48 +147,17 @@ uint8_t Chip8::_GetKey() {
 		return 0xFF;
 	}
 
-	int key = e.key.keysym.sym;
+	char key = (char)e.key.keysym.sym;
 	
-	std::cout << "KEY: " << key << std::endl;
+	std::cout << "KEY: " << (char)key <<", "<< (int)key << std::endl;
 
 	//regular 0 to 9 offset is +30
 	//numpad 1-9,0 offset is +40000059
 
-	switch (key) {
-	case(0+30): case(0x40000062):
-		std::cout << "T" << std::endl;
-		return 0;
-	case(1+30): case(0x40000059):
-		return 1;
-	case(2+30): case(0x4000005a):
-		return 2;
-	case(3+30): case(0x4000005b):
-		return 3;
-	case(4+30): case(0x4000005c):
-		return 4;
-	case(5+30): case(0x4000005d):
-		return 5;
-	case(6+30): case(0x4000005e):
-		return 6;
-	case(7+30): case(0x4000005f):
-		return 7;
-	case(8+30): case(0x40000060):
-		return 8;
-	case(9+30): case(0x40000061):
-		return 9;
-	case(SDLK_a):
-		return 0xA;
-	case(SDLK_b):
-		return 0xB;
-	case(SDLK_c):
-		return 0xC;
-	case(SDLK_d):
-		return 0xD;
-	case(SDLK_e):
-		return 0xE;
-	case(SDLK_f):
-		return 0xF;
-	default:
-		return 0xFF;
-	}
+	return HelperFunctions::KeyToValue(key);
 }
+
+bool Chip8::_IsPressed(int c) {
+	return keyStates[c];
+}
+

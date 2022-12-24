@@ -1,7 +1,9 @@
 #include "main.h"
 
+
 Display::Display() {}
 Display::~Display() {}
+
 
 void Display::Init() {
 	SDL_Init(SDL_INIT_EVERYTHING);
@@ -67,8 +69,26 @@ int Display::HandleEvents() {
 	switch (event.type) {
 	case SDL_QUIT:
 		return 1;
+	case SDL_KEYDOWN:
+	{
+		int val = HelperFunctions::KeyToValue((char)event.key.keysym.sym);
+		if (val != 0xFF) {
+			keyStates[val] = 1;
+		}
+	}
+		return 2;
+	case SDL_KEYUP:
+	{
+		int val = HelperFunctions::KeyToValue((char)event.key.keysym.sym);
+		if (val != 0xFF) {
+			keyStates[val] = 0;
+		}
+	}
+		return 3;
 	default:
 		break;
 	}
 	return 0;
 }
+
+

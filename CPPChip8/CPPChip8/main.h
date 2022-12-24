@@ -7,3 +7,4 @@
 #include "SDL.h"
 #include "display.h"
 #include "emulate.h"
+#include "helpers.h"

@@ -27,6 +27,9 @@
     <ClCompile Include="emulateops.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="helpers.h">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -41,5 +44,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="ROMS\clock.ch8" />
+    <None Include="ROMS\chip8-test-suite.ch8" />
+    <None Include="ROMS\lunar.ch8" />
+    <None Include="ROMS\maze.ch8" />
   </ItemGroup>
 </Project>

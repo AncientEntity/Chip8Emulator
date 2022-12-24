@@ -3,12 +3,13 @@
 
 #include "main.h"
 
-static const char* fileName = "ROMS\\brix.ch8";
+static const char* fileName = "ROMS\\randomnumber.ch8";
 
 
 int main(int argc, char* argv[])
 {
     Chip8 *chip = new Chip8();
+    chip->SetDebug(false);
     //chip->DebugOpCodeTest();
     chip->LoadROM(fileName);
     //chip->OverrideMemory(0x200, 0xF0);
@@ -19,29 +20,45 @@ int main(int argc, char* argv[])
     Display* display = new Display();
     display->Init();
     
+    chip->SetInput(&display->keyStates[0]);
+
     bool running = true;
+
+    double tickDelta = 0;
+    uint32_t lastTickStart = SDL_GetTicks();
+
+    int i = 0;
 
     while (running) {
         int eventResult = display->HandleEvents();
         if (eventResult == 1) { running = 0; }
-        int tickResult = chip->Tick();
+        int tickResult = chip->Tick(tickDelta);
         switch(tickResult) {
         case (-1):
             std::cout << "CHIP-8 ERROR Memory Out Of Bounds Exception" << std::endl;
             running = 0;
         
         case(-2):
-            std::cout << "CHIP-8 ERROR Instruction Failed: " << chip->GetCurrentInstruction(-1) << std::endl;
+            std::cout << "CHIP-8 ERROR Instruction Failed: " << std::hex << chip->GetCurrentInstruction(-1) << std::endl;
             break;
         default:
             break;
         }
 
+        if (chip->displayChanged) {
+            display->Render(chip->GetDisplayBuffer());
+            chip->displayChanged = false;
+            //std::cout << "Display Updated" << std::endl;
+        }
 
-        display->Render(chip->GetDisplayBuffer());
+        uint32_t newTime = SDL_GetTicks();
+        tickDelta = (newTime - lastTickStart) / 1000.0;
+        lastTickStart = newTime;
 
         //std::cin.get();
         //SDL_Delay(100);
+
+        i += 1;
     }
 
     display->Close();

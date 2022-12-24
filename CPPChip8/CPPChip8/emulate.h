@@ -6,7 +6,8 @@ public:
 	~Chip8();
 
 	void Init();
-	int Tick();
+	int Tick(double timePast);
+	void SetInput(int* keyStateArray) { keyStates = keyStateArray; }
 
 	uint8_t* GetDisplayBuffer();
 	int GetCurrentInstruction(int offset);
@@ -15,20 +16,30 @@ public:
 
 	void OverrideMemory(int index, int8_t val); //For easy memory injection for debugging opcodes.
 	void DebugOpCodeTest();						//Injects memory with a few opcodes to test.
+	void SetDebug(bool b) { debugMode = b; } 
+
+	bool displayChanged = false;
+
 private:
 	uint8_t memory[4096];
 	uint8_t registers[16];
 	int addressRegister;
 	int stack[16];
 	int stackDepth = 0;
+	int *keyStates;
 
 	int16_t iRegister = 0;
 	int programCounter = 0x200;
 
 	int16_t opcode = 0;
 
-	int soundTimer = 0;
-	int delayTimer = 0;
+	//int soundTimer = 0;
+	double soundTimerRaw = 0;
+	//int delayTimer = 0;
+	double delayTimerRaw = 0;
+
+
+	bool debugMode = false;
 
 
 	int** CreateArray(int x, int y);
@@ -106,6 +117,7 @@ private:
 
 
 	uint8_t _GetKey();
+	bool _IsPressed(int c);
 
 };
 

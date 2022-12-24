@@ -2,7 +2,9 @@
 
 bool Chip8::_ZZZZ(int opcode) {
 	int extractedOp = opcode & 0xF000;
-	std::cout << "Extracted: " << extractedOp << ", POS: " << programCounter << std::endl;
+	if (debugMode) {
+		std::cout << "Extracted: " << extractedOp << ", POS: " << programCounter << std::endl;
+	}
 	switch (extractedOp) {
 		//Top Level Cases
 	case 0x0000:
@@ -73,6 +75,8 @@ bool Chip8::_8ZZZ(int opcode) {
 		return _8XY5(opcode);
 	case(0x0006):
 		return _8XY6(opcode);
+	case(0x0007):
+		return _8XY7(opcode);
 	case(0x000E):
 		return _8XYE(opcode);
 	default:
@@ -95,8 +99,14 @@ bool Chip8::_FZZZ(int opcode) {
 	switch (extractedOp) {
 	//case(0x0007): //Instruction NEI
 	//	return _FX07(opcode);
+	case(0x0007):
+		return _FX07(opcode);
 	case(0x000A):
 		return _FX0A(opcode);
+	case(0x0015):
+		return _FX15(opcode);
+	case(0x0018):
+		return _FX18(opcode);
 	case(0x001E):
 		return _FX1E(opcode);
 	case(0x0029):
@@ -105,6 +115,8 @@ bool Chip8::_FZZZ(int opcode) {
 		return _FX55(opcode);
 	case(0x0065):
 		return _FX65(opcode);
+	case(0x0033):
+		return _FX33(opcode);
 
 	default:
 		return false;
@@ -135,7 +147,7 @@ bool Chip8::_00E0(int opcode) {
 	for (int i = 0xF00; i < 0xFFF; i++) {
 		memory[i] = 0;
 	}
-
+	displayChanged = true;
 	return true;
 }
 
@@ -273,7 +285,7 @@ bool Chip8::_8XY4(int opcode) {
 	uint8_t before = registers[reg1];
 	registers[reg1] += registers[reg2];
 
-	if (before <= registers[reg1]) {
+	if (before > registers[reg1]) {
 		//Carry occured
 		registers[0xF] = 1;
 	}
@@ -293,7 +305,7 @@ bool Chip8::_8XY5(int opcode) {
 	uint8_t before = registers[reg1];
 	registers[reg1] -= registers[reg2];
 
-	if (before >= registers[reg1]) {
+	if (before < registers[reg1]) {
 		//Carry occured
 		registers[0xF] = 0;
 	}
@@ -309,15 +321,30 @@ bool Chip8::_8XY5(int opcode) {
 
 //8Xy6 Vx >>= 1
 bool Chip8::_8XY6(int opcode) {
-	int reg = opcode & 0x0F00 >> 8;
-	registers[0xF] = registers[reg] & 0x1;
+	int reg = (opcode & 0x0F00) >> 8;
+	registers[0xF] = (registers[reg] % 2 != 0);
 	registers[reg] = registers[reg] >> 1;
 
 	return true;
 }
+
+//Vx = Vy - Vx
+bool Chip8::_8XY7(int opcode) {
+	int regX = (opcode & 0x0F00) >> 8;
+	int regY = (opcode & 0x00F0) >> 4;
+	if (registers[regY] < registers[regX]) {
+		registers[0xF] = 0;
+	} else {
+		registers[0xF] = 1;
+	}
+	registers[regX] = registers[regY] - registers[regX];
+
+	return true;
+}
+
 //8Xy6 Vx <<= 1
 bool Chip8::_8XYE(int opcode) {
-	int reg = opcode & 0x0F00 >> 8;
+	int reg = (opcode & 0x0F00) >> 8;
 	registers[0xF] = (registers[reg] & 0x8000) >> 7;
 	registers[reg] = registers[reg] << 1;
 
@@ -392,7 +419,7 @@ bool Chip8::_DXYN(int opcode) {
 		bufferPos += 8;
 		iPos += 1;
 	}
-
+	displayChanged = true;
 	return true;
 
 }
@@ -401,7 +428,7 @@ bool Chip8::_DXYN(int opcode) {
 bool Chip8::_EX9E(int opcode) {
 
 	int reg = (opcode & 0x0F00) >> 8;
-	if (registers[reg] == _GetKey()) {
+	if (_IsPressed(registers[reg])) {
 		programCounter += 2;
 	}
 
@@ -412,7 +439,7 @@ bool Chip8::_EX9E(int opcode) {
 bool Chip8::_EXA1(int opcode) {
 
 	int reg = (opcode & 0x0F00) >> 8;
-	if (registers[reg] != _GetKey()) {
+	if (!_IsPressed(registers[reg])) {
 		programCounter += 2;
 	}
 
@@ -429,7 +456,7 @@ bool Chip8::_FX0A(int opcode) {
 	}
 
 	registers[reg] = key;
-	std::cout << "Awaited: " << key << std::endl;
+	//std::cout << "Awaited: " << key << std::endl;
 
 	return true;
 }
@@ -479,3 +506,46 @@ bool Chip8::_FX65(int opcode) {
 
 	return true;
 }
+
+//Vx = get_delay()
+bool Chip8::_FX07(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	registers[reg] = (int)delayTimerRaw;
+
+	return true;
+}
+
+//delay_timer(Vx)
+bool Chip8::_FX15(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	delayTimerRaw = (double)registers[reg];
+
+	return true;
+}
+
+//sound_timer(Vx)
+bool Chip8::_FX18(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	soundTimerRaw = (double)registers[reg];
+
+	return true;
+}
+
+//BCD
+bool Chip8::_FX33(int opcode) {
+	int reg = (opcode & 0x0F00) >> 8;
+
+	int regValue = registers[reg];
+
+	memory[iRegister] = regValue / 100;
+	memory[iRegister + 1] = (regValue % 100) / 10;
+	memory[iRegister + 2] = (regValue % 10);
+
+
+	return true;
+}
+
+
